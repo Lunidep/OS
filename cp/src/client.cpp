@@ -5,12 +5,10 @@
 void func(int fd_recv, string login){
     while (true){
         string reply = c_recieve(fd_recv);
-        if (login.find("chat") == -1){
-            //cout << reply << "\n";
-            cout.flush();
-            cout << login << ">";
-            
-        }cout.flush();
+        //cout << reply << "\n";
+        cout.flush();
+        cout << login << ">";
+        cout.flush();
     }
 }
 
@@ -38,34 +36,41 @@ int main(){
 
     
     string adressee, message;
-    cout << "You have successfully signed!\n";
+    cout << "You have successfully signed!\n\n";
 
     //запуск потока принятия сообщений от сервера
     thread thr_recieve(func, fd_recv, login);
 
-    //запуск цикла отправки сообщений на сервер
-    if (login.find("chat") == -1){//user
-        cout << "USAGE: <recipient's login> <your message>\n\tquit - completion of work\n"; 
+    cout << "USAGE: <recipient's login or chat name> <your message>\n";
+    cout << "\tcreate <chat's name> <user's quantity> <names of users>\n";
+    cout << "\tEXAMPLE: create family_chat 3 mama papa kot\n\n";
+    cout << "\tquit - completion of work\n\n"; 
         
-        while (true) {
-            cout << login <<"> ";
-            cin >> adressee;
+    while (true) {
+        cout << login <<"> ";
+        cin >> adressee;
 
-            if (adressee == "quit")
-                break;
+        if (adressee == "quit"){ //quit client
+            break;
+        }
+        if (adressee == "create"){ //create new chat
+            string cur;
+            cin >> cur; 
+            message += cur + "$";
+
+            int n; cin >> n;
+            while (n > 0){
+                cin >> cur;
+                message += cur + "$";
+                n--;
+            }
+        }
+        else{ 
             getline(cin, message);
-            c_send(fd_send, login, adressee, message);
         }
+        
+        c_send(fd_send, login, adressee, message);
+        
     }
-    else{//chat
-        cout << "\tquit - completion of work\n\n"; 
-
-        while (true) {
-            cin >> adressee;
-            if (adressee == "quit")
-                break;
-        }
-    }
-
     thr_recieve.detach();
 }

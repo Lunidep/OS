@@ -101,6 +101,18 @@ string find_recipient(string message) {
     return text;
 }
 
+string find_text(string message) {
+    string text;
+    int i = 0;
+    while (message[i] != '$') { ++i; }  ++i;
+    while (message[i] != '$') { ++i; }  ++i;
+    while (i < message.size()) {
+        text.push_back(message[i]);
+        ++i;
+    }
+    return text;
+}
+
 //поиск в сообщении информации для отправки получателю - текст + отправитель
 string find_message_info(string message){
     string res, sender, mess;
